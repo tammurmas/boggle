@@ -1,4 +1,4 @@
-package tamm.org.boggle.wordlist;
+package tamm.org.boggle.board;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,12 +7,12 @@ import java.util.Random;
 
 public class BoggleBoard {
 	
-	private static final int defaultSize = 4;
+	public static final int DEFAULT_SIZE = 4;
 	private static final List<String> letters = new ArrayList<String>(Arrays.asList("A",
 			"B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
 			"O", "P", "Qu", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"));
 	
-	private int size;
+	private final int size;
 	private String[][] fieldValues;
 	
 	/**
@@ -20,7 +20,7 @@ public class BoggleBoard {
 	 */
 	public BoggleBoard()
 	{
-		this(defaultSize);
+		this(DEFAULT_SIZE);
 	}
 	
 	/**
@@ -94,7 +94,7 @@ public class BoggleBoard {
 	 */
 	public int getDefaultSize()
 	{
-		return defaultSize;
+		return DEFAULT_SIZE;
 	}
 	
 	/**

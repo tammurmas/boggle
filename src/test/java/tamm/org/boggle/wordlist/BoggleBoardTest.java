@@ -3,6 +3,8 @@ package tamm.org.boggle.wordlist;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import tamm.org.boggle.board.BoggleBoard;
+
 public class BoggleBoardTest {
 	
 	public BoggleBoard board = new BoggleBoard(6);

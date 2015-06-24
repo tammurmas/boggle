@@ -8,6 +8,8 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import tamm.org.boggle.board.WordList;
+
 public class WordListTest {
 
 	WordList wList;

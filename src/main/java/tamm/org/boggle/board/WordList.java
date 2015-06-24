@@ -1,4 +1,4 @@
-package tamm.org.boggle.wordlist;
+package tamm.org.boggle.board;
 
 import java.io.BufferedReader;
 import java.io.File;
