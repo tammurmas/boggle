@@ -144,4 +144,19 @@ public class WordList {
 	{
 		return wordList;
 	}
+	
+	/**
+	 * To return the contents of the word list
+	 */
+	@Override
+	public String toString()
+	{
+		String words = "";
+		for(String s: wordList)
+		{
+			words += s+"; ";
+		}
+		
+		return words;
+	}
 }
