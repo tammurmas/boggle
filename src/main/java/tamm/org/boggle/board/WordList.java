@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -14,8 +15,12 @@ import java.util.Set;
  * @author Urmas
  *
  */
-public class WordList {
+public class WordList implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5544543279417459668L;
 	/** a set to contain the possible words found **/
 	private Set<String> wordList;
 	

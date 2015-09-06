@@ -1,12 +1,17 @@
 package tamm.org.boggle.board;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class BoggleBoard {
+public class BoggleBoard implements Serializable{
 	
+	/**
+	 * Serializable id
+	 */
+	private static final long serialVersionUID = 1016130578633869867L;
 	public static final int DEFAULT_SIZE = 4;
 	private static final List<String> letters = new ArrayList<String>(Arrays.asList("A",
 			"B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",

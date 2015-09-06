@@ -1,5 +1,7 @@
 package tamm.org.boggle.server;
 
+import java.io.Serializable;
+
 import tamm.org.boggle.board.WordList;
 
 /**
@@ -11,9 +13,15 @@ import tamm.org.boggle.board.WordList;
  * This class is also used to return the game-results to all clients when a
  * round of Boggle is completed.
  **/
-public class ClientInfo {
+public class ClientInfo implements Serializable{
 
   /**
+	 * 
+	 */
+	private static final long serialVersionUID = -1705675367217831288L;
+
+
+/**
    * This enum specifies the states that clients can be in while they are
    * playing a round of Boggle.
    **/
@@ -64,7 +72,7 @@ public class ClientInfo {
     if (clientName == null)
       throw new NullPointerException();
 
-    name = clientName;
+    setName(clientName);
     state = State.WAITING;
     words = null;
     filteredWords = null;
@@ -167,5 +175,15 @@ public class ClientInfo {
   public void setScore(int val) {
     score = val;
   }
+
+
+public String getName() {
+	return name;
+}
+
+
+public void setName(String name) {
+	this.name = name;
+}
 }
 

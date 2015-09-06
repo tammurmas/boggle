@@ -1,13 +1,18 @@
 package tamm.org.boggle.server;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * This class is used as a wrapper for all of the game-results of a single round
  * of Boggle.
  **/
-public class GameResults {
+public class GameResults implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4357812976548379414L;
 	/**
 	 * This hash-map contains the information about each client that
 	 * participated in the most recent round of Boggle. Each client's
@@ -55,6 +60,49 @@ public class GameResults {
 		// 8+ 11
 		//
 		// You can use the setScore(...) method to store the client's score.
+		for(ClientInfo res: playerResults)
+		{
+			int score = 0;
+			//TODO: add only real words, right now add all
+			res.setFilteredWords(res.getWords());
+			for (String str: res.getFilteredWords().getWordList()) {
+				score += computeScore(str);
+			}
+			
+			res.setScore(score);
+			clientResults.put(res.getName(), res);
+		}
+	}
+	
+	private int computeScore(String str)
+	{
+		int score = 0;
+		switch (str.length()) {
+		case 3:
+			score = 1;
+			break;
+		case 4:
+			score = 1;
+			break;
+		case 5:
+			score = 2;
+			break;
+		case 6:
+			score = 3;
+			break;
+		case 7:
+			score = 5;
+			break;
+		default:
+			break;
+		}
+		
+		if(str.length() >= 8)
+		{
+			score = 11;
+		}
+		
+		return score;
 	}
 
 	/**

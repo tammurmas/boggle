@@ -21,12 +21,13 @@ import tamm.org.boggle.board.BoggleBoard;
 import tamm.org.boggle.board.WordList;
 import tamm.org.boggle.gui.JBoggleButton.State;
 import tamm.org.boggle.server.BoggleServer;
+import tamm.org.boggle.server.GameResults;
 import tamm.org.boggle.server.PlayerException;
 
 public class BoggleClient {
 	
 	// the main frame containing parts of the BoggleBoard
-	private final JFrame mainFrame = new JFrame("Boggle Game");
+	private JFrame mainFrame;
 	// the panel containing start button and time
 	private final JPanel startButtonPanel = new JPanel();
 	// the panel containing boggle board buttons
@@ -66,15 +67,17 @@ public class BoggleClient {
 		{
 			try
 			{
-				Registry registry;
+				String host;
 				if(args.length == 2)
 				{
-					registry = LocateRegistry.getRegistry(args[1]);
+					host = args[1]; 
 				}
 				else
 				{
-					registry = LocateRegistry.getRegistry("localhost");
+					host = "localhost";
 				}
+				
+				Registry registry = LocateRegistry.getRegistry(host);
 				
 				//this "final" thing is a bit weird...
 				final BoggleServer server = (BoggleServer)registry.lookup("BoggleServer");
@@ -104,6 +107,7 @@ public class BoggleClient {
 	 */
 	public void createAndShowGUI() {
 
+		mainFrame = new JFrame("Boggle Game: "+username);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		mainFrame.setSize(400, 400);
@@ -258,6 +262,12 @@ public class BoggleClient {
 		 * Listener for the timer object
 		 */
 		private void timerAction() {
+			try {
+				GameResults results = server.gameOver(username, wordList);
+				mainFrame.setTitle("Boggle Game: "+username+" SCORE: "+results.getClientResult(username).getScore());
+			} catch (RemoteException | PlayerException e) {
+				e.printStackTrace();
+			}
 			toggleControlboardButtons(true);
 		}
 

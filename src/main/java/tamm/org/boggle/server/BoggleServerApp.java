@@ -81,7 +81,7 @@ public class BoggleServerApp implements BoggleServer {
 		 * round. The round will start when there are enough clients, and when
 		 * no other client joins before this timeout passes.
 		 **/
-		private static final long START_TIMEOUT = 15 * 1000;
+		private static final long START_TIMEOUT = 5 * 1000;
 
 		/**
 		 * The minimum number of players we must have to play a round of Boggle.
@@ -323,9 +323,8 @@ public class BoggleServerApp implements BoggleServer {
 	 * @throws RemoteException 
 	 **/
 	public static void main(String[] args) {
-		Registry registry;
 		try {
-			registry = LocateRegistry.createRegistry(1099);
+			Registry registry = LocateRegistry.createRegistry(1099);
 			
 			BoggleServerApp server = new BoggleServerApp();
 			
