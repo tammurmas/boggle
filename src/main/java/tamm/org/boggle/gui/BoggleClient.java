@@ -48,7 +48,7 @@ public class BoggleClient {
 	// the timer instance
 	private final JBoggleTimer timer = new JBoggleTimer();
 
-	// private final String[] data = {"one", "two", "three", "four"};
+	// list of words found displayed in the client
 	private JList<String> listView = new JList<String>(new DefaultListModel<String>());
 	// action handler that acts as a controller
 	private final BoggleActionHandler bActionHandler = new BoggleActionHandler();
@@ -201,36 +201,11 @@ public class BoggleClient {
 				break;
 			}
 		}
-
-		/**
-		 * Start button's action listener
-		 */
-		/*private void startButtonAction() {
-			toggleControlboardButtons(false);
-
-			// create new boggleboard layout
-			boardPanel.removeAll();
-			boardPanel.validate();
-
-			// create new boggleboard and empty wordlist
-			boardPanel.setBoard(new BoggleBoard(boardPanel.getBoardSize()));
-			wordList = new WordList();
-
-			boardPanel.clearSelValues();
-
-			// clear out last game's results
-			listPanel.removeAll();
-			listPanel.validate();
-			listView = new JList<String>(new DefaultListModel<String>());
-
-			timer.addActionListener(this);
-			timer.setTimeRemaining(1 * 15);
-			timer.startTimer();
-		}*/
 		
 		private void startButtonAction() {
 			try {
 				BoggleBoard sBoard = server.startGame(username);
+				mainFrame.setTitle("Boggle Game: "+username);
 				
 				toggleControlboardButtons(false);
 
@@ -250,7 +225,7 @@ public class BoggleClient {
 				listView = new JList<String>(new DefaultListModel<String>());
 
 				timer.addActionListener(this);
-				timer.setTimeRemaining(1 * 15);
+				timer.setTimeRemaining(1 * 30);
 				timer.startTimer();
 			} catch (RemoteException | PlayerException e) {
 				// TODO Auto-generated catch block
@@ -264,7 +239,20 @@ public class BoggleClient {
 		private void timerAction() {
 			try {
 				GameResults results = server.gameOver(username, wordList);
-				mainFrame.setTitle("Boggle Game: "+username+" SCORE: "+results.getClientResult(username).getScore());
+				mainFrame.setTitle("Boggle Game: "+username+"; FINAL SCORE: "+results.getClientResult(username).getScore());
+				
+				//clear listView's selection and select only the filtered words (present in the dictionary)
+				listView.clearSelection();
+				DefaultListModel<String> model = (DefaultListModel<String>) listView.getModel();
+				WordList filteredWords = results.getClientResult(username).getFilteredWords();
+
+				for (int i=0; i<model.size(); i++) {
+					if(filteredWords.containsWord(model.getElementAt(i)))
+					{
+						listView.getSelectionModel().addSelectionInterval(i, i);
+					}
+				}
+				
 			} catch (RemoteException | PlayerException e) {
 				e.printStackTrace();
 			}

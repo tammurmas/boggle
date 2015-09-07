@@ -3,6 +3,8 @@ package tamm.org.boggle.server;
 import java.io.Serializable;
 import java.util.*;
 
+import tamm.org.boggle.board.WordList;
+
 /**
  * This class is used as a wrapper for all of the game-results of a single round
  * of Boggle.
@@ -60,11 +62,24 @@ public class GameResults implements Serializable{
 		// 8+ 11
 		//
 		// You can use the setScore(...) method to store the client's score.
+		
+		Dictionary dict = new Dictionary();
+		
 		for(ClientInfo res: playerResults)
 		{
+			WordList filteredWords = new WordList();
+			
+			for(String str: res.getWords().getWordList())
+			{
+				if(dict.getWords().contains(str)){
+					filteredWords.addWord(str);
+				}
+			}
+			
+			//add only real words, present in the dictionary
+			res.setFilteredWords(filteredWords);
+			
 			int score = 0;
-			//TODO: add only real words, right now add all
-			res.setFilteredWords(res.getWords());
 			for (String str: res.getFilteredWords().getWordList()) {
 				score += computeScore(str);
 			}
