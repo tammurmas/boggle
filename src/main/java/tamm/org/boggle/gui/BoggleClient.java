@@ -9,6 +9,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -16,6 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingWorker;
 
 import tamm.org.boggle.board.BoggleBoard;
 import tamm.org.boggle.board.WordList;
@@ -171,6 +173,48 @@ public class BoggleClient {
 		contPanel.add(submitButton);
 	}
 	
+	private class GameStarter extends SwingWorker<BoggleBoard, Object> {
+
+		@Override
+		protected BoggleBoard doInBackground() throws RemoteException, PlayerException {
+			return server.startGame(username);
+		}
+		
+		@Override
+		protected void done()
+		{
+			try {
+				BoggleBoard sBoard = get();
+				
+				// create new boggleboard layout
+				boardPanel.removeAll();
+				boardPanel.validate();
+
+				// create new boggleboard and empty wordlist
+				boardPanel.setBoard(sBoard);
+				wordList = new WordList();
+
+				boardPanel.clearSelValues();
+
+				// clear out last game's results
+				listPanel.removeAll();
+				listPanel.validate();
+				listView = new JList<String>(new DefaultListModel<String>());
+
+				timer.addActionListener(bActionHandler);
+				timer.setTimeRemaining(1 * 30);
+				timer.startTimer();
+				
+				bActionHandler.toggleControlboardButtons(false);
+			} catch (InterruptedException | ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				bActionHandler.toggleControlboardButtons(true);
+			}
+		}
+		
+	}
+	
 	/**
 	 * An inner controller class meant for handling all the BoggleBoard actions
 	 * 
@@ -178,7 +222,7 @@ public class BoggleClient {
 	 *
 	 */
 	private class BoggleActionHandler implements ActionListener {
-
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			switch (e.getActionCommand()) {
@@ -203,6 +247,12 @@ public class BoggleClient {
 		}
 		
 		private void startButtonAction() {
+			toggleControlboardButtons(false);
+			GameStarter starter = new GameStarter();
+			starter.execute();
+		}
+		
+		/*private void startButtonAction() {
 			try {
 				BoggleBoard sBoard = server.startGame(username);
 				mainFrame.setTitle("Boggle Game: "+username);
@@ -231,7 +281,7 @@ public class BoggleClient {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
+		}*/
 
 		/**
 		 * Listener for the timer object
