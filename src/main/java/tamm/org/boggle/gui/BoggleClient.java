@@ -15,6 +15,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingWorker;
@@ -22,6 +23,8 @@ import javax.swing.SwingWorker;
 import tamm.org.boggle.board.BoggleBoard;
 import tamm.org.boggle.board.WordList;
 import tamm.org.boggle.gui.JBoggleButton.State;
+import tamm.org.boggle.gui.dialog.JGameResultsDialog;
+import tamm.org.boggle.gui.dialog.JStartDialog;
 import tamm.org.boggle.server.BoggleServer;
 import tamm.org.boggle.server.GameResults;
 import tamm.org.boggle.server.PlayerException;
@@ -54,9 +57,13 @@ public class BoggleClient {
 	private JList<String> listView = new JList<String>(new DefaultListModel<String>());
 	// action handler that acts as a controller
 	private final BoggleActionHandler bActionHandler = new BoggleActionHandler();
-	
+	//the BoggleServer instance that our client connects to
 	private BoggleServer server;
+	//player's username
 	private String username;
+	
+	//dialog object, which gets displayed, when game is starting
+	private JStartDialog startDialog;
 	
 	public BoggleClient(BoggleServer s, String u)
 	{
@@ -174,7 +181,7 @@ public class BoggleClient {
 	}
 	
 	private class GameStarter extends SwingWorker<BoggleBoard, Object> {
-
+		
 		@Override
 		protected BoggleBoard doInBackground() throws RemoteException, PlayerException {
 			return server.startGame(username);
@@ -184,6 +191,7 @@ public class BoggleClient {
 		protected void done()
 		{
 			try {
+				startDialog.dispose();
 				BoggleBoard sBoard = get();
 				
 				// create new boggleboard layout
@@ -204,11 +212,12 @@ public class BoggleClient {
 				timer.addActionListener(bActionHandler);
 				timer.setTimeRemaining(1 * 30);
 				timer.startTimer();
-				
-				bActionHandler.toggleControlboardButtons(false);
 			} catch (InterruptedException | ExecutionException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				JOptionPane.showMessageDialog(mainFrame,
+						"An error occured, please try again.", "Server error!",
+						JOptionPane.ERROR_MESSAGE);
 				bActionHandler.toggleControlboardButtons(true);
 			}
 		}
@@ -246,42 +255,16 @@ public class BoggleClient {
 			}
 		}
 		
+		/**
+		 * Listener for the start-button
+		 */
 		private void startButtonAction() {
 			toggleControlboardButtons(false);
 			GameStarter starter = new GameStarter();
 			starter.execute();
+			startDialog = new JStartDialog(mainFrame);
+			startDialog.setVisible(true);
 		}
-		
-		/*private void startButtonAction() {
-			try {
-				BoggleBoard sBoard = server.startGame(username);
-				mainFrame.setTitle("Boggle Game: "+username);
-				
-				toggleControlboardButtons(false);
-
-				// create new boggleboard layout
-				boardPanel.removeAll();
-				boardPanel.validate();
-
-				// create new boggleboard and empty wordlist
-				boardPanel.setBoard(sBoard);
-				wordList = new WordList();
-
-				boardPanel.clearSelValues();
-
-				// clear out last game's results
-				listPanel.removeAll();
-				listPanel.validate();
-				listView = new JList<String>(new DefaultListModel<String>());
-
-				timer.addActionListener(this);
-				timer.setTimeRemaining(1 * 30);
-				timer.startTimer();
-			} catch (RemoteException | PlayerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}*/
 
 		/**
 		 * Listener for the timer object
@@ -289,24 +272,18 @@ public class BoggleClient {
 		private void timerAction() {
 			try {
 				GameResults results = server.gameOver(username, wordList);
-				mainFrame.setTitle("Boggle Game: "+username+"; FINAL SCORE: "+results.getClientResult(username).getScore());
-				
-				//clear listView's selection and select only the filtered words (present in the dictionary)
-				listView.clearSelection();
-				DefaultListModel<String> model = (DefaultListModel<String>) listView.getModel();
-				WordList filteredWords = results.getClientResult(username).getFilteredWords();
-
-				for (int i=0; i<model.size(); i++) {
-					if(filteredWords.containsWord(model.getElementAt(i)))
-					{
-						listView.getSelectionModel().addSelectionInterval(i, i);
-					}
-				}
-				
+				JGameResultsDialog resDialog = new JGameResultsDialog(results, mainFrame, true);
+				resDialog.setVisible(true);
 			} catch (RemoteException | PlayerException e) {
 				e.printStackTrace();
+				JOptionPane.showMessageDialog(mainFrame,
+						"An error occured, please try again.", "Server error!",
+						JOptionPane.ERROR_MESSAGE);
 			}
-			toggleControlboardButtons(true);
+			finally
+			{
+				toggleControlboardButtons(true);
+			}
 		}
 
 		/**

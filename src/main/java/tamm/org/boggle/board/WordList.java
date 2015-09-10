@@ -164,4 +164,9 @@ public class WordList implements Serializable{
 		
 		return words;
 	}
+
+	public Iterator<String> iterator() {
+		// TODO Auto-generated method stub
+		return getWordList().iterator();
+	}
 }
