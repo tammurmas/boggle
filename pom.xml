@@ -20,17 +20,16 @@
 			<version>6.9.4</version>
 			<scope>test</scope>
 		</dependency>
-		
 		<dependency>
 	  		<groupId>log4j</groupId>
 	  		<artifactId>log4j</artifactId>
 	  		<version>1.2.12</version>
-	  	</dependency>
+  		</dependency>
 	</dependencies>
 	
 	<build>
-  		<plugins>
-  			<plugin>
+	  	<plugins>
+	  		<plugin>
 		        <groupId>org.apache.maven.plugins</groupId>
 		        <artifactId>maven-compiler-plugin</artifactId>
 		        <version>3.1</version>
@@ -39,8 +38,8 @@
 		          <source>1.8</source>
 		          <target>1.8</target>
 		        </configuration>
-		     </plugin>
-		</plugins>
-  </build>
-
+	     	</plugin>
+	     </plugins>
+ 	 </build>
+	
 </project>

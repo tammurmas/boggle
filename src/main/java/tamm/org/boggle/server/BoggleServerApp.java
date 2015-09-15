@@ -6,11 +6,11 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
-
 import tamm.org.boggle.board.BoggleBoard;
 import tamm.org.boggle.board.WordList;
+
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
 
 /**
  * This is a very simplistic implementation of a Boggle server that can handle
@@ -36,6 +36,10 @@ import tamm.org.boggle.board.WordList;
  **/
 public class BoggleServerApp implements BoggleServer {
 
+	/**
+	 * The logger instance
+	 */
+	private static Logger logger = Logger.getLogger(BoggleServerApp.class); 
 	/**
 	 * This map of usernames to client-information contains the directory of all
 	 * clients that are currently talking to the Boggle server. Clients are
@@ -68,11 +72,6 @@ public class BoggleServerApp implements BoggleServer {
 	 * These are the results of the round of Boggle that the client just played.
 	 **/
 	private GameResults gameResults;
-
-	/**
-	 * Logger
-	 */
-	private static Logger logger = Logger.getLogger(BoggleServerApp.class);
 	
 	/**
 	 * This is the internal thread that runs the Boggle server. It is started by
