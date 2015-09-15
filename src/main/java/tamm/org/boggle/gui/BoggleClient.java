@@ -20,6 +20,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingWorker;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
+
 import tamm.org.boggle.board.BoggleBoard;
 import tamm.org.boggle.board.WordList;
 import tamm.org.boggle.gui.JBoggleButton.State;
@@ -65,6 +68,9 @@ public class BoggleClient {
 	//dialog object, which gets displayed, when game is starting
 	private JStartDialog startDialog;
 	
+	//logger
+	private static Logger logger = Logger.getLogger(BoggleClient.class);
+	
 	public BoggleClient(BoggleServer s, String u)
 	{
 		server = s;
@@ -74,6 +80,7 @@ public class BoggleClient {
 	public static void main(String[] args) {
 		if(args.length == 1 || args.length == 2)
 		{
+			BasicConfigurator.configure();
 			try
 			{
 				String host;
@@ -100,7 +107,8 @@ public class BoggleClient {
 		        });
 			}
 			catch (RemoteException | NotBoundException e) {
-				System.err.println("Server internal error!");
+				//System.err.println("Server internal error!");
+				logger.error("Server internal error!");
 				e.printStackTrace();
 				System.exit(1);
 			}
@@ -210,7 +218,7 @@ public class BoggleClient {
 				listView = new JList<String>(new DefaultListModel<String>());
 
 				timer.addActionListener(bActionHandler);
-				timer.setTimeRemaining(1 * 30);
+				timer.setTimeRemaining(1 * 60);
 				timer.startTimer();
 			} catch (InterruptedException | ExecutionException e) {
 				// TODO Auto-generated catch block

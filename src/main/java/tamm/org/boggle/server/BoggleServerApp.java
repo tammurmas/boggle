@@ -6,6 +6,9 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
+
 import tamm.org.boggle.board.BoggleBoard;
 import tamm.org.boggle.board.WordList;
 
@@ -66,6 +69,11 @@ public class BoggleServerApp implements BoggleServer {
 	 **/
 	private GameResults gameResults;
 
+	/**
+	 * Logger
+	 */
+	private static Logger logger = Logger.getLogger(BoggleServerApp.class);
+	
 	/**
 	 * This is the internal thread that runs the Boggle server. It is started by
 	 * the <tt>BoggleServerApp</tt> constructor, and it encodes the flow of the
@@ -142,7 +150,8 @@ public class BoggleServerApp implements BoggleServer {
 						}
 					}
 
-					System.out.println("=== NEW ROUND STARTING ===");
+					//System.out.println("=== NEW ROUND STARTING ===");
+					logger.info("=== NEW ROUND STARTING ===");
 
 					// Generate a new Boggle board for the current round. This
 					// is shared
@@ -226,7 +235,9 @@ public class BoggleServerApp implements BoggleServer {
 	 *             used.
 	 **/
 	public BoggleBoard startGame(String clientName) throws PlayerException {
-		System.out.println("Client \"" + clientName
+		/*System.out.println("Client \"" + clientName
+				+ "\" wants to start a game.");*/
+		logger.info("Client \"" + clientName
 				+ "\" wants to start a game.");
 
 		ClientInfo myInfo = new ClientInfo(clientName);
@@ -256,7 +267,9 @@ public class BoggleServerApp implements BoggleServer {
 		// Once we get here, we are ready to start playing.
 		// Return the BoggleBoard for this round's players to use.
 
-		System.out.println("Client \"" + clientName
+		/*System.out.println("Client \"" + clientName
+				+ "\" is playing this round.");*/
+		logger.info("Client \"" + clientName
 				+ "\" is playing this round.");
 		return boggleBoard;
 	}
@@ -287,7 +300,10 @@ public class BoggleServerApp implements BoggleServer {
 				throw new PlayerException(clientName + " is unrecognized!");
 		}
 
-		System.out.println("Client \"" + clientName
+		/*System.out.println("Client \"" + clientName
+				+ "\" has submitted a word-list of " + myWords.size()
+				+ " words.");*/
+		logger.info("Client \"" + clientName
 				+ "\" has submitted a word-list of " + myWords.size()
 				+ " words.");
 
@@ -324,6 +340,8 @@ public class BoggleServerApp implements BoggleServer {
 	 **/
 	public static void main(String[] args) {
 		try {
+			BasicConfigurator.configure();
+			
 			Registry registry = LocateRegistry.createRegistry(1099);
 			
 			BoggleServerApp server = new BoggleServerApp();
@@ -332,9 +350,11 @@ public class BoggleServerApp implements BoggleServer {
 			
 			registry.rebind("BoggleServer", serverStub);
 			
-			System.out.println("Server ready and running!");
+			//System.out.println("Server ready and running!");
+			logger.info("Server ready and running!");
 		} catch (RemoteException e) {
-			System.err.println("Server internal error!");
+			//System.err.println("Server internal error!");
+			logger.error("Server internal error!");
 			e.printStackTrace();
 		}
 		
