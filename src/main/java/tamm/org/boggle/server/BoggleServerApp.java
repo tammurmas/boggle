@@ -9,6 +9,9 @@ import java.util.*;
 import tamm.org.boggle.board.BoggleBoard;
 import tamm.org.boggle.board.WordList;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
+
 /**
  * This is a very simplistic implementation of a Boggle server that can handle
  * multiple requests from Boggle clients wanting to play a round of Boggle.
@@ -33,6 +36,10 @@ import tamm.org.boggle.board.WordList;
  **/
 public class BoggleServerApp implements BoggleServer {
 
+	/**
+	 * The logger instance
+	 */
+	private static Logger logger = Logger.getLogger(BoggleServerApp.class); 
 	/**
 	 * This map of usernames to client-information contains the directory of all
 	 * clients that are currently talking to the Boggle server. Clients are
@@ -142,7 +149,8 @@ public class BoggleServerApp implements BoggleServer {
 						}
 					}
 
-					System.out.println("=== NEW ROUND STARTING ===");
+					//System.out.println("=== NEW ROUND STARTING ===");
+					logger.info("=== NEW ROUND STARTING ===");
 
 					// Generate a new Boggle board for the current round. This
 					// is shared
@@ -332,7 +340,9 @@ public class BoggleServerApp implements BoggleServer {
 			
 			registry.rebind("BoggleServer", serverStub);
 			
-			System.out.println("Server ready and running!");
+			//System.out.println("Server ready and running!");
+			BasicConfigurator.configure();
+			logger.info("Server ready and running!");
 		} catch (RemoteException e) {
 			System.err.println("Server internal error!");
 			e.printStackTrace();
